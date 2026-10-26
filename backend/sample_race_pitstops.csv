@@ -1,0 +1,17 @@
+
+circuit,lap,lap_time,compound,pit_stop,pit_duration
+Silverstone,1,1:39.521,MEDIUM,no,
+Silverstone,2,1:38.845,MEDIUM,no,
+Silverstone,3,1:38.432,MEDIUM,no,
+Silverstone,4,1:38.710,MEDIUM,no,
+Silverstone,5,1:39.132,MEDIUM,no,
+Silverstone,6,1:39.450,MEDIUM,yes,24.500
+Silverstone,7,1:38.173,HARD,no,
+Silverstone,8,1:38.125,HARD,no,
+Silverstone,9,1:38.542,HARD,no,
+Silverstone,10,1:38.950,HARD,no,
+Silverstone,11,1:39.125,HARD,yes,23.800
+Silverstone,12,1:37.345,SOFT,no,
+Silverstone,13,1:37.142,SOFT,no,
+Silverstone,14,1:37.510,SOFT,no,
+Silverstone,15,1:37.895,SOFT,no,
