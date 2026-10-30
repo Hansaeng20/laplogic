@@ -1,7 +1,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, CSSProperties, ReactNode } from 'react'
-
+import StrategyAdvisor from "./components/StrategyAdvisor";
 import {
   Activity,
   AlertTriangle,
@@ -382,11 +382,10 @@ function CompoundSelector({
             type="button"
             aria-pressed={value === compound}
             onClick={() => onChange(compound)}
-            className={`flex items-center justify-center gap-1.5 rounded-lg border px-0.5 py-2.5 text-[11px] font-bold transition ${
-              value === compound
+            className={`flex items-center justify-center gap-1.5 rounded-lg border px-0.5 py-2.5 text-[11px] font-bold transition ${value === compound
                 ? 'border-[#E10600] bg-red-500/10 text-white'
                 : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
-            }`}
+              }`}
           >
             <span
               className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -670,9 +669,8 @@ function HeroMedia() {
         .matches
   )
 
-  const mediaClass = `absolute inset-0 h-full w-full object-cover transition-opacity duration-[2500ms] ease-out ${
-    ready ? 'opacity-100' : 'opacity-0'
-  }`
+  const mediaClass = `absolute inset-0 h-full w-full object-cover transition-opacity duration-[2500ms] ease-out ${ready ? 'opacity-100' : 'opacity-0'
+    }`
 
   return (
     <div
@@ -1861,21 +1859,21 @@ function App() {
 
         {/* RACE DATA UPLOAD */}
         <section id="analyze" className="scroll-mt-28">
-        <RaceCarDivider onReveal={setAnalyzeRevealed} />
+          <RaceCarDivider onReveal={setAnalyzeRevealed} />
 
-        <div
-          className={`analyze-reveal ${
-            analyzeRevealed ? 'is-revealed' : ''
-          }`}
-        >
-          <p className="text-xs font-bold uppercase tracking-widest text-red-400">
-            Start Here
-          </p>
+          <div
+            className={`analyze-reveal ${analyzeRevealed ? 'is-revealed' : ''
+              }`}
+          >
+            <p className="text-xs font-bold uppercase tracking-widest text-red-400">
+              Start Here
+            </p>
 
-          <h2 className="mt-2 text-3xl font-bold">
-            New Race Analysis
-          </h2>
+            <h2 className="mt-2 text-3xl font-bold">
+              New Race Analysis
+            </h2>
 
+<<<<<<< HEAD
           <p className="mt-2 text-sm text-slate-400">
             Select your racing category and upload your session data.
           </p>
@@ -1908,14 +1906,29 @@ function App() {
                     clearResults()
                   }}
                   className="w-full appearance-none rounded-lg border border-white/15 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
-                >
-                  {CATEGORIES.map((item) => (
-                    <option key={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
+=======
+            <p className="mb-7 mt-2 text-sm text-slate-400">
+              Select your racing category and upload your session data.
+            </p>
 
+            <div className="grid gap-6 lg:grid-cols-2">
+
+              {/* CONFIGURATION */}
+              <Panel>
+                <h3 className="mb-7 flex items-center gap-3 font-bold">
+                  <Flag size={20} className="text-red-400" />
+                  Session Configuration
+                </h3>
+
+                <label
+                  htmlFor="category"
+                  className="mb-2 block text-sm text-slate-300"
+>>>>>>> refs/remotes/origin/main
+                >
+                  Racing Category
+                </label>
+
+<<<<<<< HEAD
                 <ChevronDown
                   size={18}
                   className="pointer-events-none absolute right-4 top-4 text-slate-400"
@@ -2016,40 +2029,39 @@ function App() {
                         ? 'border-[#E10600] bg-red-500/10'
                         : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
                       }`}
+=======
+                <div className="relative mb-6">
+                  <select
+                    id="category"
+                    value={category}
+                    onChange={(e) => {
+                      setCategory(e.target.value)
+                      clearResults()
+                    }}
+                    className="w-full appearance-none rounded-xl border border-slate-700 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
+>>>>>>> refs/remotes/origin/main
                   >
-                    {item.icon}
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+                    {CATEGORIES.map((item) => (
+                      <option key={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
 
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => fileRef.current?.click()}
-                onKeyDown={(e) => {
-                  if (
-                    e.key === 'Enter' ||
-                    e.key === ' '
-                  ) {
-                    e.preventDefault()
-                    fileRef.current?.click()
-                  }
-                }}
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  setDragging(true)
-                }}
-                onDragLeave={(e) => {
-                  e.preventDefault()
-                  setDragging(false)
-                }}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  setDragging(false)
+                  <ChevronDown
+                    size={18}
+                    className="pointer-events-none absolute right-4 top-4 text-slate-400"
+                  />
+                </div>
 
-                  const file = e.dataTransfer.files[0]
+                <label
+                  htmlFor="simulator"
+                  className="mb-2 block text-sm text-slate-300"
+                >
+                  Simulator / Game
+                </label>
 
+<<<<<<< HEAD
                   if (file) {
                     chooseFile(file)
                   }
@@ -2071,58 +2083,73 @@ function App() {
                   className="hidden"
                   aria-label="Choose race file"
                 />
+=======
+                <div className="relative">
+                  <select
+                    id="simulator"
+                    value={simulator}
+                    onChange={(e) => {
+                      setSimulator(e.target.value)
+                      clearResults()
+                    }}
+                    className="w-full appearance-none rounded-xl border border-slate-700 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
+                  >
+                    {SIMULATORS.map((game) => (
+                      <option key={game}>
+                        {game}
+                      </option>
+                    ))}
+                  </select>
+>>>>>>> refs/remotes/origin/main
 
-                <UploadCloud
-                  size={36}
-                  className="mb-4 text-red-400"
-                />
+                  <ChevronDown
+                    size={18}
+                    className="pointer-events-none absolute right-4 top-4 text-slate-400"
+                  />
+                </div>
 
-                <p className="font-semibold">
-                  Drag & drop your{' '}
-                  {uploadMode.toUpperCase()} file
-                </p>
+                <div className="mt-7 rounded-xl border border-slate-800 bg-[#0c1320] p-4 text-sm">
+                  <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Current Session
+                  </p>
 
-                <p className="mt-2 text-sm text-slate-500">
-                  or click to browse
-                </p>
-
-                <p className="mt-4 text-xs text-slate-600">
-                  Maximum size: 5 MB
-                </p>
-              </div>
-
-              {selectedFile && (
-                <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <CheckCircle2
-                      size={19}
-                      className="shrink-0 text-emerald-400"
-                    />
-
-                    <span className="min-w-0 truncate text-sm">
-                      {selectedFile.name}
-                      <span className="ml-2 text-slate-500">
-                        ({formatSize(selectedFile.size)})
-                      </span>
+                  <div className="flex justify-between gap-4">
+                    <span className="text-slate-400">
+                      Category
+                    </span>
+                    <span className="text-right font-semibold">
+                      {category}
                     </span>
                   </div>
 
-                  <button
-                    type="button"
-                    aria-label="Remove file"
-                    onClick={removeFile}
-                  >
-                    <X size={18} />
-                  </button>
+                  <div className="mt-3 flex justify-between gap-4">
+                    <span className="text-slate-400">
+                      Simulator
+                    </span>
+                    <span className="text-right font-semibold">
+                      {simulator}
+                    </span>
+                  </div>
+
+                  <div className="mt-3 flex justify-between gap-4">
+                    <span className="text-slate-400">
+                      Circuit
+                    </span>
+                    <span className="text-right font-semibold text-sky-400">
+                      {analysis?.circuit ?? 'Read from CSV'}
+                    </span>
+                  </div>
                 </div>
-              )}
+              </Panel>
 
-              {fileError && (
-                <p className="mt-4 text-sm text-red-400">
-                  {fileError}
-                </p>
-              )}
+              {/* FILE UPLOAD */}
+              <Panel>
+                <h3 className="mb-7 flex items-center gap-3 font-bold">
+                  <UploadCloud size={20} className="text-red-400" />
+                  Upload Race Data
+                </h3>
 
+<<<<<<< HEAD
               <button
                 type="button"
                 disabled={
@@ -2144,21 +2171,170 @@ function App() {
                     size={18}
                     className="transition-transform group-hover:translate-x-1"
                   />
+=======
+                <div className="mb-5 grid grid-cols-2 gap-3">
+                  {([
+                    {
+                      mode: 'csv',
+                      label: 'CSV Data',
+                      icon: <FileSpreadsheet size={18} />,
+                    },
+                    {
+                      mode: 'pdf',
+                      label: 'PDF Report',
+                      icon: <FileText size={18} />,
+                    },
+                  ] as const).map((item) => (
+                    <button
+                      key={item.mode}
+                      type="button"
+                      aria-pressed={uploadMode === item.mode}
+                      onClick={() => changeMode(item.mode)}
+                      className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-sm font-semibold ${uploadMode === item.mode
+                        ? 'border-red-600 bg-red-500/10'
+                        : 'border-slate-700 text-slate-400'
+                        }`}
+                    >
+                      {item.icon}
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => fileRef.current?.click()}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key === 'Enter' ||
+                      e.key === ' '
+                    ) {
+                      e.preventDefault()
+                      fileRef.current?.click()
+                    }
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    setDragging(true)
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault()
+                    setDragging(false)
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    setDragging(false)
+
+                    const file = e.dataTransfer.files[0]
+
+                    if (file) {
+                      chooseFile(file)
+                    }
+                  }}
+                  className={`flex min-h-60 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center ${dragging
+                    ? 'border-red-500 bg-red-500/10'
+                    : 'border-slate-700 bg-[#0c1320] hover:border-slate-500'
+                    }`}
+                >
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept={
+                      uploadMode === 'csv'
+                        ? '.csv'
+                        : '.pdf'
+                    }
+                    onChange={handleInput}
+                    className="hidden"
+                    aria-label="Choose race file"
+                  />
+
+                  <UploadCloud
+                    size={36}
+                    className="mb-4 text-red-400"
+                  />
+
+                  <p className="font-semibold">
+                    Drag & drop your{' '}
+                    {uploadMode.toUpperCase()} file
+                  </p>
+
+                  <p className="mt-2 text-sm text-slate-500">
+                    or click to browse
+                  </p>
+
+                  <p className="mt-4 text-xs text-slate-600">
+                    Maximum size: 5 MB
+                  </p>
+                </div>
+
+                {selectedFile && (
+                  <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <CheckCircle2
+                        size={19}
+                        className="shrink-0 text-emerald-400"
+                      />
+
+                      <span className="min-w-0 truncate text-sm">
+                        {selectedFile.name}
+                        <span className="ml-2 text-slate-500">
+                          ({formatSize(selectedFile.size)})
+                        </span>
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      aria-label="Remove file"
+                      onClick={removeFile}
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+>>>>>>> refs/remotes/origin/main
                 )}
 
-                {loading || intro
-                  ? 'Analyzing...'
-                  : 'Analyze Race'}
-              </button>
+                {fileError && (
+                  <p className="mt-4 text-sm text-red-400">
+                    {fileError}
+                  </p>
+                )}
 
-              {uploadMode === 'pdf' && (
-                <p className="mt-3 text-center text-xs text-amber-400">
-                  PDF analysis will be added later.
-                </p>
-              )}
-            </Panel>
+                <button
+                  type="button"
+                  disabled={
+                    !selectedFile ||
+                    uploadMode !== 'csv' ||
+                    loading ||
+                    intro
+                  }
+                  onClick={analyzeRace}
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#E10600] px-6 py-4 font-semibold hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {loading || intro ? (
+                    <LoaderCircle
+                      size={18}
+                      className="animate-spin"
+                    />
+                  ) : (
+                    <ArrowRight size={18} />
+                  )}
+
+                  {loading || intro
+                    ? 'Analyzing...'
+                    : 'Analyze Race'}
+                </button>
+
+                {uploadMode === 'pdf' && (
+                  <p className="mt-3 text-center text-xs text-amber-400">
+                    PDF analysis will be added later.
+                  </p>
+                )}
+              </Panel>
+            </div>
           </div>
-        </div>
         </section>
 
         {/* ANALYSIS ERRORS */}
@@ -2459,9 +2635,15 @@ function App() {
                     {analysis.laps.map((lap) => (
                       <tr
                         key={lap.lap}
+<<<<<<< HEAD
                         className={`border-t border-white/10 ${lap.is_pit_stop
                             ? 'bg-amber-500/5'
                             : ''
+=======
+                        className={`border-t border-slate-800 ${lap.is_pit_stop
+                          ? 'bg-amber-500/5'
+                          : ''
+>>>>>>> refs/remotes/origin/main
                           }`}
                       >
                         <td className="px-5 py-3">
@@ -2494,6 +2676,13 @@ function App() {
           </section>
         )}
 
+        {/* AUTOMATIC STRATEGY ADVISOR */}
+        {analysis && selectedFile && uploadMode === 'csv' && (
+          <section className="mt-16 scroll-mt-28">
+            <StrategyAdvisor file={selectedFile} />
+          </section>
+        )}
+
         {/* ==================================
             STRATEGY PLANNER
         ================================== */}
@@ -2521,9 +2710,8 @@ function App() {
             </div>
 
             <div
-              className={`engine-block ${
-                strategyLoading ? 'is-comparing' : ''
-              }`}
+              className={`engine-block ${strategyLoading ? 'is-comparing' : ''
+                }`}
             >
               {/* HEADER + LIVE PLAN SUMMARY */}
               <div className="engine-head flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
@@ -2601,11 +2789,10 @@ function App() {
                         type="button"
                         onClick={() => changeStrategyType(type)}
                         aria-pressed={strategyType === type}
-                        className={`w-full rounded-lg border px-4 py-3 text-left transition ${
-                          strategyType === type
-                            ? 'border-[#E10600] bg-red-500/10'
-                            : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
-                        }`}
+                        className={`w-full rounded-lg border px-4 py-3 text-left transition ${strategyType === type
+                          ? 'border-[#E10600] bg-red-500/10'
+                          : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
+                          }`}
                       >
                         <span className="block font-semibold">
                           {type === 'one_stop'
