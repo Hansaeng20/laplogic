@@ -380,18 +380,10 @@ function CompoundSelector({
             type="button"
             aria-pressed={value === compound}
             onClick={() => onChange(compound)}
-<<<<<<< HEAD
-            className={`flex flex-wrap items-center justify-center gap-2 rounded-xl border px-2 py-3 text-xs font-bold transition ${value === compound
-              ? 'border-[#E10600] bg-red-500/10 text-white'
-              : 'border-slate-700 bg-[#0c1320] text-slate-400 hover:border-slate-500'
-              }`}
-=======
-            className={`flex items-center justify-center gap-1.5 rounded-lg border px-0.5 py-2.5 text-[11px] font-bold transition ${
-              value === compound
+            className={`flex items-center justify-center gap-1.5 rounded-lg border px-0.5 py-2.5 text-[11px] font-bold transition ${value === compound
                 ? 'border-[#E10600] bg-red-500/10 text-white'
                 : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
-            }`}
->>>>>>> 182d4bd2d9abd144436b0f3c7a2d0ddf18728e23
+              }`}
           >
             <span
               className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -2590,8 +2582,8 @@ function App() {
                         onClick={() => changeStrategyType(type)}
                         aria-pressed={strategyType === type}
                         className={`w-full rounded-lg border px-4 py-3 text-left transition ${strategyType === type
-                            ? 'border-[#E10600] bg-red-500/10'
-                            : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
+                          ? 'border-[#E10600] bg-red-500/10'
+                          : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
                           }`}
                       >
                         <span className="block font-semibold">
