@@ -238,10 +238,10 @@ function summarizeComparison(comparison: StrategyComparison) {
   const gap =
     best && runnerUp
       ? Math.max(
-          0,
-          (runnerUp.estimated_total_time ?? 0) -
-            (best.estimated_total_time ?? 0)
-        )
+        0,
+        (runnerUp.estimated_total_time ?? 0) -
+        (best.estimated_total_time ?? 0)
+      )
       : null
 
   const paces = Object.entries(comparison.pace_profiles).sort(
@@ -383,8 +383,8 @@ function CompoundSelector({
             aria-pressed={value === compound}
             onClick={() => onChange(compound)}
             className={`flex items-center justify-center gap-1.5 rounded-lg border px-0.5 py-2.5 text-[11px] font-bold transition ${value === compound
-                ? 'border-[#E10600] bg-red-500/10 text-white'
-                : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
+              ? 'border-[#E10600] bg-red-500/10 text-white'
+              : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
               }`}
           >
             <span
@@ -1873,163 +1873,22 @@ function App() {
               New Race Analysis
             </h2>
 
-<<<<<<< HEAD
-          <p className="mt-2 text-sm text-slate-400">
-            Select your racing category and upload your session data.
-          </p>
-
-          <div className="section-rule mb-7" />
-
-          <div className="grid gap-6 lg:grid-cols-2">
-
-            {/* CONFIGURATION */}
-            <Panel>
-              <PanelTitle
-                step="01"
-                title="Session Configuration"
-                hint="Pick the category and game"
-              />
-
-              <label
-                htmlFor="category"
-                className="mb-2 block text-sm text-slate-300"
-              >
-                Racing Category
-              </label>
-
-              <div className="relative mb-6">
-                <select
-                  id="category"
-                  value={category}
-                  onChange={(e) => {
-                    setCategory(e.target.value)
-                    clearResults()
-                  }}
-                  className="w-full appearance-none rounded-lg border border-white/15 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
-=======
-            <p className="mb-7 mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-slate-400">
               Select your racing category and upload your session data.
             </p>
+            <div className="section-rule mb-7" />
 
             <div className="grid gap-6 lg:grid-cols-2">
-
               {/* CONFIGURATION */}
               <Panel>
-                <h3 className="mb-7 flex items-center gap-3 font-bold">
-                  <Flag size={20} className="text-red-400" />
-                  Session Configuration
-                </h3>
-
-                <label
-                  htmlFor="category"
-                  className="mb-2 block text-sm text-slate-300"
->>>>>>> refs/remotes/origin/main
-                >
+                <PanelTitle
+                  step="01"
+                  title="Session Configuration"
+                  hint="Pick the category and game"
+                />
+                <label htmlFor="category" className="mb-2 block text-sm text-slate-300">
                   Racing Category
                 </label>
-
-<<<<<<< HEAD
-                <ChevronDown
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-4 text-slate-400"
-                />
-              </div>
-
-              <label
-                htmlFor="simulator"
-                className="mb-2 block text-sm text-slate-300"
-              >
-                Simulator / Game
-              </label>
-
-              <div className="relative">
-                <select
-                  id="simulator"
-                  value={simulator}
-                  onChange={(e) => {
-                    setSimulator(e.target.value)
-                    clearResults()
-                  }}
-                  className="w-full appearance-none rounded-lg border border-white/15 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
-                >
-                  {SIMULATORS.map((game) => (
-                    <option key={game}>
-                      {game}
-                    </option>
-                  ))}
-                </select>
-
-                <ChevronDown
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-4 text-slate-400"
-                />
-              </div>
-
-              <div className="mt-7 rounded-lg border border-white/10 bg-[#0c1320] p-4 text-sm">
-                <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Current Session
-                </p>
-
-                <div className="flex justify-between gap-4">
-                  <span className="text-slate-400">
-                    Category
-                  </span>
-                  <span className="text-right font-semibold">
-                    {category}
-                  </span>
-                </div>
-
-                <div className="mt-3 flex justify-between gap-4">
-                  <span className="text-slate-400">
-                    Simulator
-                  </span>
-                  <span className="text-right font-semibold">
-                    {simulator}
-                  </span>
-                </div>
-
-                <div className="mt-3 flex justify-between gap-4">
-                  <span className="text-slate-400">
-                    Circuit
-                  </span>
-                  <span className="text-right font-semibold text-sky-400">
-                    {analysis?.circuit ?? 'Read from CSV'}
-                  </span>
-                </div>
-              </div>
-            </Panel>
-
-            {/* FILE UPLOAD */}
-            <Panel>
-              <PanelTitle
-                step="02"
-                title="Upload Race Data"
-                hint="Add your session file"
-              />
-
-              <div className="mb-5 grid grid-cols-2 gap-3">
-                {([
-                  {
-                    mode: 'csv',
-                    label: 'CSV Data',
-                    icon: <FileSpreadsheet size={18} />,
-                  },
-                  {
-                    mode: 'pdf',
-                    label: 'PDF Report',
-                    icon: <FileText size={18} />,
-                  },
-                ] as const).map((item) => (
-                  <button
-                    key={item.mode}
-                    type="button"
-                    aria-pressed={uploadMode === item.mode}
-                    onClick={() => changeMode(item.mode)}
-                    className={`flex items-center justify-center gap-2 rounded-lg border p-3 text-sm font-semibold transition ${uploadMode === item.mode
-                        ? 'border-[#E10600] bg-red-500/10'
-                        : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
-                      }`}
-=======
                 <div className="relative mb-6">
                   <select
                     id="category"
@@ -2038,52 +1897,18 @@ function App() {
                       setCategory(e.target.value)
                       clearResults()
                     }}
-                    className="w-full appearance-none rounded-xl border border-slate-700 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
->>>>>>> refs/remotes/origin/main
+                    className="w-full appearance-none rounded-lg border border-white/15 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
                   >
                     {CATEGORIES.map((item) => (
-                      <option key={item}>
-                        {item}
-                      </option>
+                      <option key={item} value={item}>{item}</option>
                     ))}
                   </select>
-
-                  <ChevronDown
-                    size={18}
-                    className="pointer-events-none absolute right-4 top-4 text-slate-400"
-                  />
+                  <ChevronDown size={18} className="pointer-events-none absolute right-4 top-4 text-slate-400" />
                 </div>
 
-                <label
-                  htmlFor="simulator"
-                  className="mb-2 block text-sm text-slate-300"
-                >
+                <label htmlFor="simulator" className="mb-2 block text-sm text-slate-300">
                   Simulator / Game
                 </label>
-
-<<<<<<< HEAD
-                  if (file) {
-                    chooseFile(file)
-                  }
-                }}
-                className={`flex min-h-60 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center ${dragging
-                    ? 'border-red-500 bg-red-500/10'
-                    : 'border-white/20 bg-[#0c1320] hover:border-white/40'
-                  }`}
-              >
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept={
-                    uploadMode === 'csv'
-                      ? '.csv'
-                      : '.pdf'
-                  }
-                  onChange={handleInput}
-                  className="hidden"
-                  aria-label="Choose race file"
-                />
-=======
                 <div className="relative">
                   <select
                     id="simulator"
@@ -2092,49 +1917,27 @@ function App() {
                       setSimulator(e.target.value)
                       clearResults()
                     }}
-                    className="w-full appearance-none rounded-xl border border-slate-700 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
+                    className="w-full appearance-none rounded-lg border border-white/15 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
                   >
                     {SIMULATORS.map((game) => (
-                      <option key={game}>
-                        {game}
-                      </option>
+                      <option key={game} value={game}>{game}</option>
                     ))}
                   </select>
->>>>>>> refs/remotes/origin/main
-
-                  <ChevronDown
-                    size={18}
-                    className="pointer-events-none absolute right-4 top-4 text-slate-400"
-                  />
+                  <ChevronDown size={18} className="pointer-events-none absolute right-4 top-4 text-slate-400" />
                 </div>
 
-                <div className="mt-7 rounded-xl border border-slate-800 bg-[#0c1320] p-4 text-sm">
-                  <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Current Session
-                  </p>
-
+                <div className="mt-7 rounded-lg border border-white/10 bg-[#0c1320] p-4 text-sm">
+                  <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Current Session</p>
                   <div className="flex justify-between gap-4">
-                    <span className="text-slate-400">
-                      Category
-                    </span>
-                    <span className="text-right font-semibold">
-                      {category}
-                    </span>
+                    <span className="text-slate-400">Category</span>
+                    <span className="text-right font-semibold">{category}</span>
                   </div>
-
                   <div className="mt-3 flex justify-between gap-4">
-                    <span className="text-slate-400">
-                      Simulator
-                    </span>
-                    <span className="text-right font-semibold">
-                      {simulator}
-                    </span>
+                    <span className="text-slate-400">Simulator</span>
+                    <span className="text-right font-semibold">{simulator}</span>
                   </div>
-
                   <div className="mt-3 flex justify-between gap-4">
-                    <span className="text-slate-400">
-                      Circuit
-                    </span>
+                    <span className="text-slate-400">Circuit</span>
                     <span className="text-right font-semibold text-sky-400">
                       {analysis?.circuit ?? 'Read from CSV'}
                     </span>
@@ -2144,59 +1947,23 @@ function App() {
 
               {/* FILE UPLOAD */}
               <Panel>
-                <h3 className="mb-7 flex items-center gap-3 font-bold">
-                  <UploadCloud size={20} className="text-red-400" />
-                  Upload Race Data
-                </h3>
-
-<<<<<<< HEAD
-              <button
-                type="button"
-                disabled={
-                  !selectedFile ||
-                  uploadMode !== 'csv' ||
-                  loading ||
-                  intro
-                }
-                onClick={analyzeRace}
-                className="ignition group mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-[#E10600] px-6 py-4 font-bold transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {loading || intro ? (
-                  <LoaderCircle
-                    size={18}
-                    className="animate-spin"
-                  />
-                ) : (
-                  <ArrowRight
-                    size={18}
-                    className="transition-transform group-hover:translate-x-1"
-                  />
-=======
+                <PanelTitle step="02" title="Upload Race Data" hint="Add your session file" />
                 <div className="mb-5 grid grid-cols-2 gap-3">
                   {([
-                    {
-                      mode: 'csv',
-                      label: 'CSV Data',
-                      icon: <FileSpreadsheet size={18} />,
-                    },
-                    {
-                      mode: 'pdf',
-                      label: 'PDF Report',
-                      icon: <FileText size={18} />,
-                    },
+                    { mode: 'csv', label: 'CSV Data', icon: <FileSpreadsheet size={18} /> },
+                    { mode: 'pdf', label: 'PDF Report', icon: <FileText size={18} /> },
                   ] as const).map((item) => (
                     <button
                       key={item.mode}
                       type="button"
                       aria-pressed={uploadMode === item.mode}
                       onClick={() => changeMode(item.mode)}
-                      className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-sm font-semibold ${uploadMode === item.mode
-                        ? 'border-red-600 bg-red-500/10'
-                        : 'border-slate-700 text-slate-400'
+                      className={`flex items-center justify-center gap-2 rounded-lg border p-3 text-sm font-semibold transition ${uploadMode === item.mode
+                        ? 'border-[#E10600] bg-red-500/10'
+                        : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
                         }`}
                     >
-                      {item.icon}
-                      {item.label}
+                      {item.icon}{item.label}
                     </button>
                   ))}
                 </div>
@@ -2206,10 +1973,7 @@ function App() {
                   tabIndex={0}
                   onClick={() => fileRef.current?.click()}
                   onKeyDown={(e) => {
-                    if (
-                      e.key === 'Enter' ||
-                      e.key === ' '
-                    ) {
+                    if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
                       fileRef.current?.click()
                     }
@@ -2225,112 +1989,58 @@ function App() {
                   onDrop={(e) => {
                     e.preventDefault()
                     setDragging(false)
-
                     const file = e.dataTransfer.files[0]
-
-                    if (file) {
-                      chooseFile(file)
-                    }
+                    if (file) chooseFile(file)
                   }}
-                  className={`flex min-h-60 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center ${dragging
+                  className={`flex min-h-60 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center ${dragging
                     ? 'border-red-500 bg-red-500/10'
-                    : 'border-slate-700 bg-[#0c1320] hover:border-slate-500'
+                    : 'border-white/20 bg-[#0c1320] hover:border-white/40'
                     }`}
                 >
                   <input
                     ref={fileRef}
                     type="file"
-                    accept={
-                      uploadMode === 'csv'
-                        ? '.csv'
-                        : '.pdf'
-                    }
+                    accept={uploadMode === 'csv' ? '.csv' : '.pdf'}
                     onChange={handleInput}
                     className="hidden"
                     aria-label="Choose race file"
                   />
-
-                  <UploadCloud
-                    size={36}
-                    className="mb-4 text-red-400"
-                  />
-
-                  <p className="font-semibold">
-                    Drag & drop your{' '}
-                    {uploadMode.toUpperCase()} file
-                  </p>
-
-                  <p className="mt-2 text-sm text-slate-500">
-                    or click to browse
-                  </p>
-
-                  <p className="mt-4 text-xs text-slate-600">
-                    Maximum size: 5 MB
-                  </p>
+                  <UploadCloud size={36} className="mb-4 text-red-400" />
+                  <p className="font-semibold">Drag & drop your {uploadMode.toUpperCase()} file</p>
+                  <p className="mt-2 text-sm text-slate-500">or click to browse</p>
+                  <p className="mt-4 text-xs text-slate-600">Maximum size: 5 MB</p>
                 </div>
 
                 {selectedFile && (
-                  <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                  <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
                     <div className="flex min-w-0 items-center gap-2">
-                      <CheckCircle2
-                        size={19}
-                        className="shrink-0 text-emerald-400"
-                      />
-
+                      <CheckCircle2 size={19} className="shrink-0 text-emerald-400" />
                       <span className="min-w-0 truncate text-sm">
                         {selectedFile.name}
-                        <span className="ml-2 text-slate-500">
-                          ({formatSize(selectedFile.size)})
-                        </span>
+                        <span className="ml-2 text-slate-500">({formatSize(selectedFile.size)})</span>
                       </span>
                     </div>
-
-                    <button
-                      type="button"
-                      aria-label="Remove file"
-                      onClick={removeFile}
-                    >
+                    <button type="button" aria-label="Remove file" onClick={removeFile}>
                       <X size={18} />
                     </button>
                   </div>
->>>>>>> refs/remotes/origin/main
                 )}
 
-                {fileError && (
-                  <p className="mt-4 text-sm text-red-400">
-                    {fileError}
-                  </p>
-                )}
+                {fileError && <p className="mt-4 text-sm text-red-400">{fileError}</p>}
 
                 <button
                   type="button"
-                  disabled={
-                    !selectedFile ||
-                    uploadMode !== 'csv' ||
-                    loading ||
-                    intro
-                  }
+                  disabled={!selectedFile || uploadMode !== 'csv' || loading || intro}
                   onClick={analyzeRace}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#E10600] px-6 py-4 font-semibold hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="ignition group mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-[#E10600] px-6 py-4 font-bold transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {loading || intro ? (
-                    <LoaderCircle
-                      size={18}
-                      className="animate-spin"
-                    />
-                  ) : (
-                    <ArrowRight size={18} />
-                  )}
-
                   {loading || intro
-                    ? 'Analyzing...'
-                    : 'Analyze Race'}
+                    ? <LoaderCircle size={18} className="animate-spin" />
+                    : <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />}
+                  {loading || intro ? 'Analyzing...' : 'Analyze Race'}
                 </button>
-
                 {uploadMode === 'pdf' && (
-                  <p className="mt-3 text-center text-xs text-amber-400">
-                    PDF analysis will be added later.
-                  </p>
+                  <p className="mt-3 text-center text-xs text-amber-400">PDF analysis will be added later.</p>
                 )}
               </Panel>
             </div>
@@ -2635,15 +2345,9 @@ function App() {
                     {analysis.laps.map((lap) => (
                       <tr
                         key={lap.lap}
-<<<<<<< HEAD
                         className={`border-t border-white/10 ${lap.is_pit_stop
-                            ? 'bg-amber-500/5'
-                            : ''
-=======
-                        className={`border-t border-slate-800 ${lap.is_pit_stop
                           ? 'bg-amber-500/5'
                           : ''
->>>>>>> refs/remotes/origin/main
                           }`}
                       >
                         <td className="px-5 py-3">
@@ -3088,7 +2792,7 @@ function App() {
 
                       <div className="sm:text-right">
                         {comparisonView.runnerUp &&
-                        comparisonView.gap !== null ? (
+                          comparisonView.gap !== null ? (
                           comparisonView.gap > 0 ? (
                             <>
                               <p className="font-mono text-2xl font-bold text-emerald-300">
@@ -3124,22 +2828,21 @@ function App() {
 
                       const behind =
                         strategy.supported &&
-                        !isBest &&
-                        comparisonView.best
+                          !isBest &&
+                          comparisonView.best
                           ? Math.max(
-                              0,
-                              (strategy.estimated_total_time ?? 0) -
-                                (comparisonView.best
-                                  .estimated_total_time ?? 0)
-                            )
+                            0,
+                            (strategy.estimated_total_time ?? 0) -
+                            (comparisonView.best
+                              .estimated_total_time ?? 0)
+                          )
                           : null
 
                       return (
                         <div
                           key={strategy.strategy}
-                          className={`engine-card ${
-                            isBest ? 'is-best' : ''
-                          }`}
+                          className={`engine-card ${isBest ? 'is-best' : ''
+                            }`}
                         >
                           <div className="mb-5 flex flex-wrap items-center gap-3">
                             <span
