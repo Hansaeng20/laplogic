@@ -299,9 +299,33 @@ function Panel({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-[#111827] p-6 ${className}`}
+      className={`panel p-6 ${className}`}
     >
       {children}
+    </div>
+  )
+}
+
+// Numbered panel heading (same piston badge as the strategy steps)
+function PanelTitle({
+  step,
+  title,
+  hint,
+}: {
+  step: string
+  title: string
+  hint: string
+}) {
+  return (
+    <div className="mb-6 flex items-center gap-3">
+      <span className="engine-piston" aria-hidden="true">
+        {step}
+      </span>
+
+      <div className="min-w-0">
+        <h3 className="font-bold">{title}</h3>
+        <p className="text-xs text-slate-500">{hint}</p>
+      </div>
     </div>
   )
 }
@@ -335,69 +359,6 @@ function Metric({
         {subtitle}
       </p>
     </Panel>
-  )
-}
-
-function TyreTimeline({
-  stints,
-}: {
-  stints: TimelineStint[]
-}) {
-  const total = stints.reduce(
-    (sum, stint) =>
-      sum + Math.max(0, stint.end_lap - stint.start_lap + 1),
-    0
-  )
-
-  if (total === 0) {
-    return null
-  }
-
-  return (
-    <div>
-      <div className="flex h-5 overflow-hidden rounded-full bg-slate-800">
-        {stints.map((stint, index) => {
-          const length =
-            Math.max(0, stint.end_lap - stint.start_lap + 1)
-
-          return (
-            <div
-              key={index}
-              title={`${stint.compound}: Laps ${stint.start_lap}-${stint.end_lap}`}
-              style={{
-                width: `${(length / total) * 100}%`,
-                backgroundColor: tyreColor(stint.compound),
-                borderRight:
-                  index < stints.length - 1
-                    ? '2px solid #111827'
-                    : undefined,
-              }}
-            />
-          )
-        })}
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3">
-        {stints.map((stint, index) => (
-          <div
-            key={index}
-            className="flex items-center gap-2 text-xs text-slate-300"
-          >
-            <span
-              className="h-3 w-3 rounded-full"
-              style={{
-                backgroundColor: tyreColor(stint.compound),
-              }}
-            />
-
-            <span>
-              {stint.compound} · Laps {stint.start_lap}–
-              {stint.end_lap}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
   )
 }
 
@@ -1744,7 +1705,7 @@ function App() {
   // ==========================================
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-white">
+    <div className="app-bg min-h-screen text-white">
 
       {/* NAVIGATION */}
       <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0d1320]/95 backdrop-blur-xl">
@@ -1915,18 +1876,21 @@ function App() {
             New Race Analysis
           </h2>
 
-          <p className="mb-7 mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-slate-400">
             Select your racing category and upload your session data.
           </p>
+
+          <div className="section-rule mb-7" />
 
           <div className="grid gap-6 lg:grid-cols-2">
 
             {/* CONFIGURATION */}
             <Panel>
-              <h3 className="mb-7 flex items-center gap-3 font-bold">
-                <Flag size={20} className="text-red-400" />
-                Session Configuration
-              </h3>
+              <PanelTitle
+                step="01"
+                title="Session Configuration"
+                hint="Pick the category and game"
+              />
 
               <label
                 htmlFor="category"
@@ -1943,7 +1907,7 @@ function App() {
                     setCategory(e.target.value)
                     clearResults()
                   }}
-                  className="w-full appearance-none rounded-xl border border-slate-700 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
+                  className="w-full appearance-none rounded-lg border border-white/15 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
                 >
                   {CATEGORIES.map((item) => (
                     <option key={item}>
@@ -1973,7 +1937,7 @@ function App() {
                     setSimulator(e.target.value)
                     clearResults()
                   }}
-                  className="w-full appearance-none rounded-xl border border-slate-700 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
+                  className="w-full appearance-none rounded-lg border border-white/15 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500"
                 >
                   {SIMULATORS.map((game) => (
                     <option key={game}>
@@ -1988,7 +1952,7 @@ function App() {
                 />
               </div>
 
-              <div className="mt-7 rounded-xl border border-slate-800 bg-[#0c1320] p-4 text-sm">
+              <div className="mt-7 rounded-lg border border-white/10 bg-[#0c1320] p-4 text-sm">
                 <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
                   Current Session
                 </p>
@@ -2024,10 +1988,11 @@ function App() {
 
             {/* FILE UPLOAD */}
             <Panel>
-              <h3 className="mb-7 flex items-center gap-3 font-bold">
-                <UploadCloud size={20} className="text-red-400" />
-                Upload Race Data
-              </h3>
+              <PanelTitle
+                step="02"
+                title="Upload Race Data"
+                hint="Add your session file"
+              />
 
               <div className="mb-5 grid grid-cols-2 gap-3">
                 {([
@@ -2047,9 +2012,9 @@ function App() {
                     type="button"
                     aria-pressed={uploadMode === item.mode}
                     onClick={() => changeMode(item.mode)}
-                    className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-sm font-semibold ${uploadMode === item.mode
-                        ? 'border-red-600 bg-red-500/10'
-                        : 'border-slate-700 text-slate-400'
+                    className={`flex items-center justify-center gap-2 rounded-lg border p-3 text-sm font-semibold transition ${uploadMode === item.mode
+                        ? 'border-[#E10600] bg-red-500/10'
+                        : 'border-white/10 bg-[#0c1320] text-slate-400 hover:border-white/30'
                       }`}
                   >
                     {item.icon}
@@ -2091,7 +2056,7 @@ function App() {
                 }}
                 className={`flex min-h-60 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center ${dragging
                     ? 'border-red-500 bg-red-500/10'
-                    : 'border-slate-700 bg-[#0c1320] hover:border-slate-500'
+                    : 'border-white/20 bg-[#0c1320] hover:border-white/40'
                   }`}
               >
                 <input
@@ -2167,7 +2132,7 @@ function App() {
                   intro
                 }
                 onClick={analyzeRace}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#E10600] px-6 py-4 font-semibold hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="ignition group mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-[#E10600] px-6 py-4 font-bold transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading || intro ? (
                   <LoaderCircle
@@ -2175,7 +2140,10 @@ function App() {
                     className="animate-spin"
                   />
                 ) : (
-                  <ArrowRight size={18} />
+                  <ArrowRight
+                    size={18}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
                 )}
 
                 {loading || intro
@@ -2232,6 +2200,8 @@ function App() {
               <p className="mt-2 text-sm text-slate-400">
                 {analysis.filename} · {category} · {simulator}
               </p>
+
+              <div className="section-rule" />
             </div>
 
             {/* CIRCUIT */}
@@ -2302,7 +2272,7 @@ function App() {
                 Tyre usage from your uploaded session
               </p>
 
-              <TyreTimeline
+              <CrankStrategy
                 stints={analysis.stints.map((stint) => ({
                   start_lap: stint.start_lap,
                   end_lap: stint.end_lap,
@@ -2314,13 +2284,19 @@ function App() {
                 {analysis.stints.map((stint) => (
                   <div
                     key={stint.stint_number}
-                    className="rounded-xl border border-slate-700 bg-[#0c1320] p-4"
+                    className="rounded-lg border border-white/10 bg-[#0c1320] p-4"
                   >
                     <h4 className="font-bold">
                       Stint {stint.stint_number}
                     </h4>
 
-                    <p className="mt-2 text-sm text-slate-300">
+                    <p className="mt-2 flex items-center gap-2 text-sm text-slate-300">
+                      <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{
+                          backgroundColor: tyreColor(stint.compound),
+                        }}
+                      />
                       {stint.compound} · Laps{' '}
                       {stint.start_lap}–{stint.end_lap}
                     </p>
@@ -2354,7 +2330,7 @@ function App() {
                     (stop, index) => (
                       <div
                         key={`${stop.lap}-${index}`}
-                        className="rounded-xl border border-slate-700 bg-[#0c1320] p-5"
+                        className="rounded-lg border border-white/10 bg-[#0c1320] p-5"
                       >
                         <p className="text-xs font-bold text-red-400">
                           PIT STOP {index + 1}
@@ -2460,8 +2436,8 @@ function App() {
             </Panel>
 
             {/* LAP TABLE */}
-            <div className="overflow-hidden rounded-2xl border border-slate-800 bg-[#111827]">
-              <div className="border-b border-slate-800 p-5">
+            <div className="panel overflow-hidden">
+              <div className="border-b border-white/10 p-5">
                 <h3 className="text-xl font-bold">
                   Lap-by-Lap Breakdown
                 </h3>
@@ -2469,7 +2445,7 @@ function App() {
 
               <div className="max-h-96 overflow-auto">
                 <table className="w-full min-w-[650px] text-left text-sm">
-                  <thead className="sticky top-0 bg-[#1e293b] text-slate-400">
+                  <thead className="sticky top-0 bg-[#0e1626] text-slate-400">
                     <tr>
                       <th className="px-5 py-3">Lap</th>
                       <th className="px-5 py-3">Time</th>
@@ -2483,7 +2459,7 @@ function App() {
                     {analysis.laps.map((lap) => (
                       <tr
                         key={lap.lap}
-                        className={`border-t border-slate-800 ${lap.is_pit_stop
+                        className={`border-t border-white/10 ${lap.is_pit_stop
                             ? 'bg-amber-500/5'
                             : ''
                           }`}
@@ -2540,6 +2516,8 @@ function App() {
                 Compare one-stop and two-stop plans using
                 estimated pace from your uploaded racing data.
               </p>
+
+              <div className="section-rule" />
             </div>
 
             <div
@@ -3191,6 +3169,8 @@ function App() {
           <h2 className="mt-2 text-3xl font-bold">
             Built for Every Racer
           </h2>
+
+          <div className="section-rule" />
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {[

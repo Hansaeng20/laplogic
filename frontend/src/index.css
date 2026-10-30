@@ -800,3 +800,40 @@ button:disabled {
   );
   padding: 1rem 1.25rem;
 }
+
+
+/* ==========================================
+   SHARED SURFACES + PAGE BACKGROUND
+   ========================================== */
+
+/* Standard panel: soft top-light so containers feel less flat */
+.panel {
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 55%),
+    #111827;
+}
+
+/* Small red rule under section headings */
+.section-rule {
+  width: 2.5rem;
+  height: 2px;
+  margin-top: 1rem;
+  border-radius: 2px;
+  background: #e10600;
+}
+
+/* Page background: soft red and steel-blue glows in the empty space.
+   They start below the hero so the hero video fades into a flat color. */
+.app-bg {
+  background-color: #080c14;
+  background-repeat: no-repeat;
+  background-image:
+    radial-gradient(55rem 26rem at 0% 1100px, rgba(225, 6, 0, 0.09), transparent 70%),
+    radial-gradient(55rem 26rem at 100% 1900px, rgba(70, 110, 190, 0.1), transparent 70%),
+    radial-gradient(55rem 26rem at 0% 2800px, rgba(70, 110, 190, 0.09), transparent 70%),
+    radial-gradient(55rem 26rem at 100% 3700px, rgba(225, 6, 0, 0.08), transparent 70%),
+    radial-gradient(55rem 26rem at 0% 4600px, rgba(225, 6, 0, 0.08), transparent 70%),
+    radial-gradient(55rem 26rem at 100% 5500px, rgba(70, 110, 190, 0.09), transparent 70%);
+}
