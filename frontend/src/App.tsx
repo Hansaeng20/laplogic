@@ -1,6 +1,7 @@
 
 import { useRef, useState } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
+import StrategyAdvisor from "./components/StrategyAdvisor";
 
 import {
   Activity,
@@ -384,8 +385,8 @@ function CompoundSelector({
             aria-pressed={value === compound}
             onClick={() => onChange(compound)}
             className={`flex flex-wrap items-center justify-center gap-2 rounded-xl border px-2 py-3 text-xs font-bold transition ${value === compound
-                ? 'border-[#E10600] bg-red-500/10 text-white'
-                : 'border-slate-700 bg-[#0c1320] text-slate-400 hover:border-slate-500'
+              ? 'border-[#E10600] bg-red-500/10 text-white'
+              : 'border-slate-700 bg-[#0c1320] text-slate-400 hover:border-slate-500'
               }`}
           >
             <span
@@ -1127,8 +1128,8 @@ function App() {
                     aria-pressed={uploadMode === item.mode}
                     onClick={() => changeMode(item.mode)}
                     className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-sm font-semibold ${uploadMode === item.mode
-                        ? 'border-red-600 bg-red-500/10'
-                        : 'border-slate-700 text-slate-400'
+                      ? 'border-red-600 bg-red-500/10'
+                      : 'border-slate-700 text-slate-400'
                       }`}
                   >
                     {item.icon}
@@ -1169,8 +1170,8 @@ function App() {
                   }
                 }}
                 className={`flex min-h-60 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center ${dragging
-                    ? 'border-red-500 bg-red-500/10'
-                    : 'border-slate-700 bg-[#0c1320] hover:border-slate-500'
+                  ? 'border-red-500 bg-red-500/10'
+                  : 'border-slate-700 bg-[#0c1320] hover:border-slate-500'
                   }`}
               >
                 <input
@@ -1542,8 +1543,8 @@ function App() {
                       <tr
                         key={lap.lap}
                         className={`border-t border-slate-800 ${lap.is_pit_stop
-                            ? 'bg-amber-500/5'
-                            : ''
+                          ? 'bg-amber-500/5'
+                          : ''
                           }`}
                       >
                         <td className="px-5 py-3">
@@ -1573,6 +1574,13 @@ function App() {
                 </table>
               </div>
             </div>
+          </section>
+        )}
+
+        {/* AUTOMATIC STRATEGY ADVISOR */}
+        {analysis && selectedFile && uploadMode === 'csv' && (
+          <section className="mt-16 scroll-mt-28">
+            <StrategyAdvisor file={selectedFile} />
           </section>
         )}
 
@@ -1623,8 +1631,8 @@ function App() {
                       onClick={() => changeStrategyType(type)}
                       aria-pressed={strategyType === type}
                       className={`rounded-xl border px-4 py-3 font-semibold transition ${strategyType === type
-                          ? 'border-[#E10600] bg-red-500/10'
-                          : 'border-slate-700 bg-[#0c1320] text-slate-400'
+                        ? 'border-[#E10600] bg-red-500/10'
+                        : 'border-slate-700 bg-[#0c1320] text-slate-400'
                         }`}
                     >
                       {type === 'one_stop'

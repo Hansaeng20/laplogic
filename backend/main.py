@@ -7,12 +7,14 @@ import pandas as pd
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from strategy import router as strategy_router
+from optimizer import router as optimizer_router
 
 app = FastAPI(
     title="Laplogic API",
     description="Universal racing performance and pit-stop analysis",
     version="0.3.0",
 )
+app.include_router(optimizer_router)
 app.include_router(strategy_router)
 
 app.add_middleware(
