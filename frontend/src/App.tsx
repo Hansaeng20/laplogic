@@ -216,6 +216,47 @@ function formatSize(bytes: number): string {
     : `${(bytes / 1024).toFixed(1)} KB`
 }
 
+// Orders strategies best-first and works out the gaps between them
+function summarizeComparison(comparison: StrategyComparison) {
+  const ordered = [...comparison.strategies].sort((a, b) => {
+    if (a.supported !== b.supported) {
+      return a.supported ? -1 : 1
+    }
+
+    return (a.rank ?? 999) - (b.rank ?? 999)
+  })
+
+  const supported = ordered.filter(
+    (strategy) =>
+      strategy.supported &&
+      typeof strategy.estimated_total_time === 'number'
+  )
+
+  const best = supported[0] ?? null
+  const runnerUp = supported[1] ?? null
+
+  const gap =
+    best && runnerUp
+      ? Math.max(
+          0,
+          (runnerUp.estimated_total_time ?? 0) -
+            (best.estimated_total_time ?? 0)
+        )
+      : null
+
+  const paces = Object.entries(comparison.pace_profiles).sort(
+    (a, b) => a[1].average_lap - b[1].average_lap
+  )
+
+  return { ordered, best, runnerUp, gap, paces }
+}
+
+function formatGap(seconds: number): string {
+  return seconds >= 60
+    ? formatTime(seconds)
+    : `${seconds.toFixed(3)}s`
+}
+
 function getErrorMessage(
   payload: unknown,
   fallback: string
@@ -1694,6 +1735,10 @@ function App() {
       (stop) => stop.lap
     ) ?? []
 
+  const comparisonView = comparison
+    ? summarizeComparison(comparison)
+    : null
+
   // ==========================================
   // UI
   // ==========================================
@@ -2822,190 +2867,310 @@ function App() {
             )}
 
             {/* STRATEGY RESULTS */}
-            {comparison && (
-              <div className="space-y-7">
-
-                <div>
-                  <h3 className="text-2xl font-bold">
-                    Strategy Comparison
-                  </h3>
-
-                  <p className="mt-2 text-sm text-slate-400">
-                    Estimated results for a{' '}
-                    {comparison.race_laps}-lap race.
-                    The alternative uses a different
-                    number of pit stops.
-                  </p>
-                </div>
-
-                {/* STRATEGY CARDS */}
-                <div className="grid gap-5 lg:grid-cols-2">
-                  {comparison.strategies.map((strategy) => (
-                    <Panel key={strategy.strategy}>
-                      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                        <h4 className="text-lg font-bold">
-                          {strategy.strategy}
-                        </h4>
-
-                        {strategy.supported && (
-                          <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
-                            Rank #{strategy.rank}
-                          </span>
-                        )}
-                      </div>
-
-                      {!strategy.supported ? (
-                        <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4">
-                          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-300">
-                            <AlertTriangle size={17} />
-                            Insufficient Data
-                          </div>
-
-                          <p className="text-sm leading-6 text-amber-100/80">
-                            {strategy.reason}
-                          </p>
-                        </div>
-                      ) : (
-                        <>
-                          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                            Estimated Total Time
-                          </p>
-
-                          <p className="mt-2 font-mono text-3xl font-bold">
-                            {formatTime(
-                              strategy.estimated_total_time ?? 0
-                            )}
-                          </p>
-
-                          <div className="mt-5 grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <p className="text-slate-500">
-                                Racing Time
-                              </p>
-
-                              <p className="mt-1 font-mono font-semibold">
-                                {formatTime(
-                                  strategy.estimated_racing_time ?? 0
-                                )}
-                              </p>
-                            </div>
-
-                            <div>
-                              <p className="text-slate-500">
-                                Additional Pit Loss
-                              </p>
-
-                              <p className="mt-1 font-mono font-semibold">
-                                {(strategy.pit_loss_total ?? 0).toFixed(3)}s
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="mt-6">
-                            <TyreTimeline
-                              stints={
-                                strategy.stints ?? []
-                              }
-                            />
-                          </div>
-
-                          {strategy.warnings &&
-                            strategy.warnings.length > 0 && (
-                              <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-200">
-                                {strategy.warnings.map(
-                                  (warning, index) => (
-                                    <p key={index}>
-                                      {warning}
-                                    </p>
-                                  )
-                                )}
-                              </div>
-                            )}
-                        </>
-                      )}
-                    </Panel>
-                  ))}
-                </div>
-
-                {/* PACE PROFILES */}
-                <Panel>
-                  <h3 className="mb-2 flex items-center gap-2 text-xl font-bold">
-                    <Clock3 className="text-red-400" />
-                    Recorded Tyre Pace
-                  </h3>
-
-                  <p className="mb-6 text-sm text-slate-400">
-                    Observed clean mean lap time
-                    for each available compound.
-                  </p>
-
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    {Object.entries(
-                      comparison.pace_profiles
-                    ).map(([compound, profile]) => (
-                      <div
-                        key={compound}
-                        className="rounded-xl border border-slate-700 bg-[#0c1320] p-4"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="h-3 w-3 rounded-full"
-                            style={{
-                              backgroundColor:
-                                tyreColor(compound),
-                            }}
-                          />
-
-                          <span className="font-bold">
-                            {compound}
-                          </span>
-                        </div>
-
-                        <p className="mt-4 font-mono text-xl font-bold">
-                          {formatTime(profile.average_lap)}
-                        </p>
-
-                        <p className="mt-2 text-xs text-slate-400">
-                          {profile.sample_laps} clean laps
-                        </p>
-
-                        <p className="mt-1 text-xs text-slate-500">
-                          Max observed tyre age:{' '}
-                          {profile.max_observed_age}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </Panel>
-
-                {/* EXPERIMENTAL DISCLAIMER */}
-                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 text-sm text-amber-200">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle
-                      size={19}
-                      className="mt-0.5 shrink-0"
-                    />
+            {comparison && comparisonView && (
+              <div className="engine-block">
+                {/* HEADER */}
+                <div className="engine-head flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+                  <div className="flex items-center gap-4">
+                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border-2 border-[#E10600] bg-[#0b1120] text-red-400">
+                      <Gauge size={24} />
+                    </span>
 
                     <div>
-                      <p className="font-bold">
-                        Experimental Strategy Estimates
-                      </p>
+                      <h3 className="text-xl font-bold">
+                        Strategy Comparison
+                      </h3>
 
-                      <p className="mt-2 leading-6">
-                        These comparisons use average
-                        recorded non-pit lap pace per tyre
-                        compound and a configured additional
-                        pit-loss assumption. The current model
-                        does not predict tyre degradation,
-                        fuel load, traffic, weather or
-                        safety-car effects.
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        Estimated results for a{' '}
+                        {comparison.race_laps}-lap race. The
+                        alternative uses a different number of
+                        pit stops.
                       </p>
+                    </div>
+                  </div>
 
-                      <p className="mt-3 leading-6">
-                        Rank #1 means the lowest estimated
-                        time among supported candidates,
-                        not a proven optimal race strategy.
-                      </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
+                      {comparison.race_laps} laps
+                    </span>
+
+                    <span className="rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
+                      {comparison.pit_loss_assumption.toFixed(1)}s pit loss
+                    </span>
+
+                    {comparison.experimental && (
+                      <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-300">
+                        Experimental
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {/* THE ANSWER */}
+                  {comparisonView.best && (
+                    <div className="engine-verdict">
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-400">
+                          Lowest estimated time
+                        </p>
+
+                        <p className="mt-1 text-2xl font-bold">
+                          {comparisonView.best.strategy}
+                        </p>
+                      </div>
+
+                      <div className="sm:text-right">
+                        {comparisonView.runnerUp &&
+                        comparisonView.gap !== null ? (
+                          comparisonView.gap > 0 ? (
+                            <>
+                              <p className="font-mono text-2xl font-bold text-emerald-300">
+                                {formatGap(comparisonView.gap)}
+                              </p>
+
+                              <p className="text-xs text-slate-400">
+                                faster than{' '}
+                                {comparisonView.runnerUp.strategy}
+                              </p>
+                            </>
+                          ) : (
+                            <p className="text-sm text-slate-300">
+                              Both plans have the same estimate.
+                            </p>
+                          )
+                        ) : (
+                          <p className="max-w-[16rem] text-xs text-slate-400">
+                            The other plan could not be estimated
+                            from this upload.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STRATEGY CARDS */}
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    {comparisonView.ordered.map((strategy) => {
+                      const isBest =
+                        strategy.supported &&
+                        strategy === comparisonView.best
+
+                      const behind =
+                        strategy.supported &&
+                        !isBest &&
+                        comparisonView.best
+                          ? Math.max(
+                              0,
+                              (strategy.estimated_total_time ?? 0) -
+                                (comparisonView.best
+                                  .estimated_total_time ?? 0)
+                            )
+                          : null
+
+                      return (
+                        <div
+                          key={strategy.strategy}
+                          className={`engine-card ${
+                            isBest ? 'is-best' : ''
+                          }`}
+                        >
+                          <div className="mb-5 flex flex-wrap items-center gap-3">
+                            <span
+                              className="engine-piston"
+                              aria-hidden="true"
+                            >
+                              {strategy.supported
+                                ? `#${strategy.rank}`
+                                : '—'}
+                            </span>
+
+                            <h4 className="min-w-0 flex-1 text-lg font-bold">
+                              {strategy.strategy}
+                            </h4>
+
+                            {isBest && (
+                              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+                                Rank #{strategy.rank}
+                              </span>
+                            )}
+
+                            {behind !== null && behind > 0 && (
+                              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 font-mono text-xs font-semibold text-amber-300">
+                                +{formatGap(behind)}
+                              </span>
+                            )}
+                          </div>
+
+                          {!strategy.supported ? (
+                            <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4">
+                              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-300">
+                                <AlertTriangle size={17} />
+                                Insufficient Data
+                              </div>
+
+                              <p className="text-sm leading-6 text-amber-100/80">
+                                {strategy.reason}
+                              </p>
+                            </div>
+                          ) : (
+                            <>
+                              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                Estimated total time
+                              </p>
+
+                              <p className="mt-1 font-mono text-3xl font-bold">
+                                {formatTime(
+                                  strategy.estimated_total_time ?? 0
+                                )}
+                              </p>
+
+                              <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                                <div className="rounded-lg border border-white/10 bg-[#0c1320] p-3">
+                                  <p className="text-xs text-slate-500">
+                                    Racing time
+                                  </p>
+
+                                  <p className="mt-1 font-mono font-semibold">
+                                    {formatTime(
+                                      strategy.estimated_racing_time ?? 0
+                                    )}
+                                  </p>
+                                </div>
+
+                                <div className="rounded-lg border border-white/10 bg-[#0c1320] p-3">
+                                  <p className="text-xs text-slate-500">
+                                    Additional pit loss
+                                  </p>
+
+                                  <p className="mt-1 font-mono font-semibold">
+                                    {(strategy.pit_loss_total ?? 0).toFixed(3)}s
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="mt-5">
+                                <CrankStrategy
+                                  stints={strategy.stints ?? []}
+                                />
+                              </div>
+
+                              {strategy.warnings &&
+                                strategy.warnings.length > 0 && (
+                                  <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-200">
+                                    {strategy.warnings.map(
+                                      (warning, index) => (
+                                        <p key={index}>{warning}</p>
+                                      )
+                                    )}
+                                  </div>
+                                )}
+                            </>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* PACE PROFILES */}
+                  <div className="engine-crank">
+                    <h4 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider">
+                      <Clock3 size={17} className="text-red-400" />
+                      Recorded tyre pace
+                    </h4>
+
+                    <p className="mb-5 mt-1 text-xs text-slate-500">
+                      Observed clean mean lap time for each
+                      available compound.
+                    </p>
+
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {comparisonView.paces.map(
+                        ([compound, profile], index) => (
+                          <div
+                            key={compound}
+                            className="rounded-lg border border-white/10 bg-[#0c1320] p-4"
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className="h-3 w-3 rounded-full"
+                                  style={{
+                                    backgroundColor: tyreColor(compound),
+                                  }}
+                                />
+
+                                <span className="font-bold">
+                                  {compound}
+                                </span>
+                              </div>
+
+                              {index === 0 &&
+                                comparisonView.paces.length > 1 && (
+                                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-400">
+                                    Quickest
+                                  </span>
+                                )}
+                            </div>
+
+                            <p className="mt-4 font-mono text-xl font-bold">
+                              {formatTime(profile.average_lap)}
+                            </p>
+
+                            {index > 0 && (
+                              <p className="mt-1 font-mono text-xs text-amber-300">
+                                +
+                                {(
+                                  profile.average_lap -
+                                  comparisonView.paces[0][1].average_lap
+                                ).toFixed(3)}
+                                s per lap
+                              </p>
+                            )}
+
+                            <p className="mt-3 text-xs text-slate-400">
+                              {profile.sample_laps} clean laps
+                            </p>
+
+                            <p className="mt-1 text-xs text-slate-500">
+                              Max observed tyre age:{' '}
+                              {profile.max_observed_age}
+                            </p>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  {/* EXPERIMENTAL DISCLAIMER */}
+                  <div className="rounded-xl border border-amber-500/20 border-l-4 border-l-amber-400 bg-amber-500/5 p-5 text-sm text-amber-200">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle
+                        size={19}
+                        className="mt-0.5 shrink-0"
+                      />
+
+                      <div>
+                        <p className="font-bold">
+                          Experimental Strategy Estimates
+                        </p>
+
+                        <p className="mt-2 leading-6">
+                          These comparisons use average recorded
+                          non-pit lap pace per tyre compound and a
+                          configured additional pit-loss
+                          assumption. The current model does not
+                          predict tyre degradation, fuel load,
+                          traffic, weather or safety-car effects.
+                        </p>
+
+                        <p className="mt-3 leading-6">
+                          Rank #1 means the lowest estimated time
+                          among supported candidates, not a proven
+                          optimal race strategy.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

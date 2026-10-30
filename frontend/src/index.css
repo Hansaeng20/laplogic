@@ -763,3 +763,40 @@ button:disabled {
     animation: none !important;
   }
 }
+
+
+/* ==========================================
+   STRATEGY RESULTS (same engine language as the planner)
+   ========================================== */
+.engine-card {
+  position: relative;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0b1120;
+  padding: 1.25rem 1rem 1.1rem;
+}
+
+.engine-card.is-best {
+  border-color: rgba(52, 211, 153, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(52, 211, 153, 0.12),
+    0 0 28px -12px rgba(52, 211, 153, 0.45);
+}
+
+/* The answer at the top of the results */
+.engine-verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-left-width: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(52, 211, 153, 0.1),
+    rgba(52, 211, 153, 0.02)
+  );
+  padding: 1rem 1.25rem;
+}
