@@ -306,30 +306,6 @@ function Panel({
   )
 }
 
-// Numbered panel heading (same piston badge as the strategy steps)
-function PanelTitle({
-  step,
-  title,
-  hint,
-}: {
-  step: string
-  title: string
-  hint: string
-}) {
-  return (
-    <div className="mb-6 flex items-center gap-3">
-      <span className="engine-piston" aria-hidden="true">
-        {step}
-      </span>
-
-      <div className="min-w-0">
-        <h3 className="font-bold">{title}</h3>
-        <p className="text-xs text-slate-500">{hint}</p>
-      </div>
-    </div>
-  )
-}
-
 function Metric({
   icon,
   label,
@@ -342,23 +318,21 @@ function Metric({
   subtitle: string
 }) {
   return (
-    <Panel>
-      <div className="mb-4 flex items-center gap-2 text-red-400">
-        {icon}
+    <div className="engine-card">
+      <div className="mb-4 flex items-center gap-3">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-[#E10600]/60 bg-[#0b1120] text-red-400">
+          {icon}
+        </span>
 
         <span className="text-xs font-bold tracking-wider text-slate-400">
           {label}
         </span>
       </div>
 
-      <p className="font-mono text-2xl font-bold">
-        {value}
-      </p>
+      <p className="font-mono text-2xl font-bold">{value}</p>
 
-      <p className="mt-2 text-xs text-slate-500">
-        {subtitle}
-      </p>
-    </Panel>
+      <p className="mt-2 text-xs text-slate-500">{subtitle}</p>
+    </div>
   )
 }
 
@@ -409,14 +383,16 @@ function EngineBay({
   title,
   hint,
   children,
+  rod = true,
 }: {
   step: string
   title: string
   hint: string
   children: ReactNode
+  rod?: boolean
 }) {
   return (
-    <div className="engine-bay">
+    <div className={`engine-bay ${rod ? '' : 'no-rod'}`}>
       <span className="engine-spark" aria-hidden="true" />
 
       <div className="mb-5 flex items-center gap-3">
@@ -631,6 +607,71 @@ function CrankStrategy({ stints }: { stints: TimelineStint[] }) {
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+// Red-outlined square that holds an icon (block header glyph)
+function EngineBadge({ children }: { children: ReactNode }) {
+  return (
+    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border-2 border-[#E10600] bg-[#0b1120] text-red-400">
+      {children}
+    </span>
+  )
+}
+
+// Small pill used in block headers (live summary, status)
+function EngineChip({
+  children,
+  tone = 'default',
+  className = '',
+}: {
+  children: ReactNode
+  tone?: 'default' | 'amber' | 'muted'
+  className?: string
+}) {
+  const tones = {
+    default: 'border-white/15 bg-[#0b1120] text-slate-200',
+    muted: 'border-white/10 bg-[#0b1120] text-slate-500',
+    amber: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
+  }
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs font-semibold ${tones[tone]} ${className}`}
+    >
+      {children}
+    </span>
+  )
+}
+
+// Header of an engine block: glyph, title, subtitle, chips, red rail
+function EngineHeader({
+  glyph,
+  title,
+  subtitle,
+  chips,
+}: {
+  glyph: ReactNode
+  title: string
+  subtitle: string
+  chips?: ReactNode
+}) {
+  return (
+    <div className="engine-head flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+      <div className="flex items-center gap-4">
+        {glyph}
+
+        <div>
+          <h3 className="text-xl font-bold">{title}</h3>
+
+          <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p>
+        </div>
+      </div>
+
+      {chips && (
+        <div className="flex flex-wrap items-center gap-2">{chips}</div>
+      )}
     </div>
   )
 }
@@ -1878,18 +1919,42 @@ function App() {
             </p>
             <div className="section-rule mb-7" />
 
-            <div className="grid gap-6 lg:grid-cols-2">
-              {/* CONFIGURATION */}
-              <Panel>
-                <PanelTitle
-                  step="01"
-                  title="Session Configuration"
-                  hint="Pick the category and game"
-                />
+            <div className="engine-block">
+              <EngineHeader
+                glyph={
+                  <EngineGears className="h-12 w-[4.5rem] shrink-0" />
+                }
+                title="Session Setup"
+                subtitle="Two quick steps, then analyze."
+                chips={
+                  <>
+                    <EngineChip>{category}</EngineChip>
+
+                    <EngineChip>{simulator}</EngineChip>
+
+                    <EngineChip
+                      tone={selectedFile ? 'default' : 'muted'}
+                      className="max-w-[14rem] truncate"
+                    >
+                      {selectedFile ? selectedFile.name : 'No file yet'}
+                    </EngineChip>
+                  </>
+                }
+              />
+
+              <div className="grid gap-4 lg:grid-cols-2">
+              {/* 01 SESSION */}
+              <EngineBay
+                step="01"
+                title="Session"
+                hint="Category and game"
+                rod={false}
+              >
+                <div>
                 <label htmlFor="category" className="mb-2 block text-sm text-slate-300">
                   Racing Category
                 </label>
-                <div className="relative mb-6">
+                <div className="relative">
                   <select
                     id="category"
                     value={category}
@@ -1905,7 +1970,9 @@ function App() {
                   </select>
                   <ChevronDown size={18} className="pointer-events-none absolute right-4 top-4 text-slate-400" />
                 </div>
+                </div>
 
+                <div>
                 <label htmlFor="simulator" className="mb-2 block text-sm text-slate-300">
                   Simulator / Game
                 </label>
@@ -1925,8 +1992,9 @@ function App() {
                   </select>
                   <ChevronDown size={18} className="pointer-events-none absolute right-4 top-4 text-slate-400" />
                 </div>
+                </div>
 
-                <div className="mt-7 rounded-lg border border-white/10 bg-[#0c1320] p-4 text-sm">
+                <div className="rounded-lg border border-white/10 bg-[#0c1320] p-4 text-sm">
                   <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Current Session</p>
                   <div className="flex justify-between gap-4">
                     <span className="text-slate-400">Category</span>
@@ -1943,12 +2011,16 @@ function App() {
                     </span>
                   </div>
                 </div>
-              </Panel>
+              </EngineBay>
 
-              {/* FILE UPLOAD */}
-              <Panel>
-                <PanelTitle step="02" title="Upload Race Data" hint="Add your session file" />
-                <div className="mb-5 grid grid-cols-2 gap-3">
+              {/* 02 UPLOAD */}
+              <EngineBay
+                step="02"
+                title="Upload"
+                hint="Your session file"
+                rod={false}
+              >
+                <div className="grid grid-cols-2 gap-3">
                   {([
                     { mode: 'csv', label: 'CSV Data', icon: <FileSpreadsheet size={18} /> },
                     { mode: 'pdf', label: 'PDF Report', icon: <FileText size={18} /> },
@@ -2012,7 +2084,7 @@ function App() {
                 </div>
 
                 {selectedFile && (
-                  <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
+                  <div className="flex items-center justify-between gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
                     <div className="flex min-w-0 items-center gap-2">
                       <CheckCircle2 size={19} className="shrink-0 text-emerald-400" />
                       <span className="min-w-0 truncate text-sm">
@@ -2026,7 +2098,10 @@ function App() {
                   </div>
                 )}
 
-                {fileError && <p className="mt-4 text-sm text-red-400">{fileError}</p>}
+                {fileError && <p className="text-sm text-red-400">{fileError}</p>}
+
+              </EngineBay>
+              </div>
 
                 <button
                   type="button"
@@ -2042,7 +2117,6 @@ function App() {
                 {uploadMode === 'pdf' && (
                   <p className="mt-3 text-center text-xs text-amber-400">PDF analysis will be added later.</p>
                 )}
-              </Panel>
             </div>
           </div>
         </section>
@@ -2090,23 +2164,28 @@ function App() {
               <div className="section-rule" />
             </div>
 
-            {/* CIRCUIT */}
-            <Panel>
-              <div className="flex items-center gap-3">
-                <MapPin size={23} className="text-red-400" />
+            <div className="engine-block">
+              <EngineHeader
+                glyph={
+                  <EngineBadge>
+                    <Gauge size={24} />
+                  </EngineBadge>
+                }
+                title="Session Results"
+                subtitle="Pace, tyres and pit stops from your upload."
+                chips={
+                  <>
+                    <EngineChip>
+                      <MapPin size={13} className="text-red-400" />
+                      {analysis.circuit}
+                    </EngineChip>
 
-                <div>
-                  <p className="text-xs font-bold tracking-wider text-slate-400">
-                    CIRCUIT FROM CSV
-                  </p>
+                    <EngineChip>{analysis.laps.length} laps</EngineChip>
+                  </>
+                }
+              />
 
-                  <h3 className="mt-1 text-2xl font-bold">
-                    {analysis.circuit}
-                  </h3>
-                </div>
-              </div>
-            </Panel>
-
+              <div className="space-y-6">
             {/* METRICS */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Metric
@@ -2149,12 +2228,12 @@ function App() {
             </div>
 
             {/* TYRE STINTS */}
-            <Panel>
-              <h3 className="text-xl font-bold">
-                Recorded Tyre Strategy
-              </h3>
+            <div className="engine-panel">
+              <h4 className="text-sm font-bold uppercase tracking-wider">
+                Recorded tyre strategy
+              </h4>
 
-              <p className="mb-6 mt-2 text-sm text-slate-400">
+              <p className="mb-5 mt-1 text-xs text-slate-500">
                 Tyre usage from your uploaded session
               </p>
 
@@ -2193,14 +2272,14 @@ function App() {
                   </div>
                 ))}
               </div>
-            </Panel>
+            </div>
 
             {/* RECORDED PIT STOPS */}
-            <Panel>
-              <h3 className="mb-5 flex items-center gap-2 text-xl font-bold">
-                <Wrench className="text-red-400" />
-                Recorded Pit Stops
-              </h3>
+            <div className="engine-panel">
+              <h4 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-wider">
+                <Wrench size={17} className="text-red-400" />
+                Recorded pit stops
+              </h4>
 
               {!analysis.pit_analysis.available ? (
                 <p className="text-sm text-amber-300">
@@ -2240,15 +2319,15 @@ function App() {
                   )}
                 </div>
               )}
-            </Panel>
+            </div>
 
             {/* LAP TIME CHART */}
-            <Panel>
-              <h3 className="text-xl font-bold">
-                Lap-Time Performance
-              </h3>
+            <div className="engine-panel">
+              <h4 className="text-sm font-bold uppercase tracking-wider">
+                Lap-time performance
+              </h4>
 
-              <p className="mb-6 mt-2 text-sm text-slate-400">
+              <p className="mb-5 mt-1 text-xs text-slate-500">
                 Red: lap time · Yellow: recorded pit lap
               </p>
 
@@ -2319,14 +2398,14 @@ function App() {
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-            </Panel>
+            </div>
 
             {/* LAP TABLE */}
-            <div className="panel overflow-hidden">
+            <div className="engine-panel engine-panel-flush overflow-hidden">
               <div className="border-b border-white/10 p-5">
-                <h3 className="text-xl font-bold">
-                  Lap-by-Lap Breakdown
-                </h3>
+                <h4 className="text-sm font-bold uppercase tracking-wider">
+                  Lap-by-lap breakdown
+                </h4>
               </div>
 
               <div className="max-h-96 overflow-auto">
@@ -2377,15 +2456,22 @@ function App() {
                 </table>
               </div>
             </div>
+              </div>
+            </div>
           </section>
         )}
 
         {/* AUTOMATIC STRATEGY ADVISOR */}
-        {analysis && selectedFile && uploadMode === 'csv' && (
-          <section className="mt-16 scroll-mt-28">
-            <StrategyAdvisor file={selectedFile} />
-          </section>
-        )}
+        {analysis &&
+          !intro &&
+          selectedFile &&
+          uploadMode === 'csv' && (
+            <section className="advisor-skin relative mt-16 scroll-mt-28">
+              <EngineGears className="advisor-gears" />
+
+              <StrategyAdvisor file={selectedFile} />
+            </section>
+          )}
 
         {/* ==================================
             STRATEGY PLANNER
@@ -2418,62 +2504,46 @@ function App() {
                 }`}
             >
               {/* HEADER + LIVE PLAN SUMMARY */}
-              <div className="engine-head flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-                <div className="flex items-center gap-4">
+              <EngineHeader
+                glyph={
                   <EngineGears className="h-12 w-[4.5rem] shrink-0" />
+                }
+                title="Strategy Configuration"
+                subtitle="Set up your plan in four steps, then compare."
+                chips={
+                  <>
+                    <EngineChip>{raceLaps} laps</EngineChip>
 
-                  <div>
-                    <h3 className="text-xl font-bold">
-                      Strategy Configuration
-                    </h3>
+                    <EngineChip>
+                      {strategyType === 'one_stop' ? '1 stop' : '2 stops'}
+                    </EngineChip>
 
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      Set up your plan in four steps, then compare.
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className="flex flex-wrap items-center gap-2"
-                  aria-label="Current plan"
-                >
-                  <span className="rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
-                    {raceLaps} laps
-                  </span>
-
-                  <span className="rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
-                    {strategyType === 'one_stop'
-                      ? '1 stop'
-                      : '2 stops'}
-                  </span>
-
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
-                    {previewStints.map((stint, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center gap-1.5"
-                      >
-                        {index > 0 && (
-                          <span className="text-slate-600">→</span>
-                        )}
-
+                    <EngineChip>
+                      {previewStints.map((stint, index) => (
                         <span
-                          className="h-2 w-2 rounded-full"
-                          style={{
-                            backgroundColor: tyreColor(stint.compound),
-                          }}
-                        />
+                          key={index}
+                          className="inline-flex items-center gap-1.5"
+                        >
+                          {index > 0 && (
+                            <span className="text-slate-600">→</span>
+                          )}
 
-                        {stint.compound.charAt(0)}
-                      </span>
-                    ))}
-                  </span>
+                          <span
+                            className="h-2 w-2 rounded-full"
+                            style={{
+                              backgroundColor: tyreColor(stint.compound),
+                            }}
+                          />
 
-                  <span className="rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
-                    {pitLoss.toFixed(1)}s pit loss
-                  </span>
-                </div>
-              </div>
+                          {stint.compound.charAt(0)}
+                        </span>
+                      ))}
+                    </EngineChip>
+
+                    <EngineChip>{pitLoss.toFixed(1)}s pit loss</EngineChip>
+                  </>
+                }
+              />
 
               {/* FOUR "CYLINDERS" */}
               <div className="mb-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -2739,42 +2809,28 @@ function App() {
             {comparison && comparisonView && (
               <div className="engine-block">
                 {/* HEADER */}
-                <div className="engine-head flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-                  <div className="flex items-center gap-4">
-                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border-2 border-[#E10600] bg-[#0b1120] text-red-400">
+                <EngineHeader
+                  glyph={
+                    <EngineBadge>
                       <Gauge size={24} />
-                    </span>
+                    </EngineBadge>
+                  }
+                  title="Strategy Comparison"
+                  subtitle={`Estimated results for a ${comparison.race_laps}-lap race. The alternative uses a different number of pit stops.`}
+                  chips={
+                    <>
+                      <EngineChip>{comparison.race_laps} laps</EngineChip>
 
-                    <div>
-                      <h3 className="text-xl font-bold">
-                        Strategy Comparison
-                      </h3>
+                      <EngineChip>
+                        {comparison.pit_loss_assumption.toFixed(1)}s pit loss
+                      </EngineChip>
 
-                      <p className="mt-0.5 text-xs text-slate-500">
-                        Estimated results for a{' '}
-                        {comparison.race_laps}-lap race. The
-                        alternative uses a different number of
-                        pit stops.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
-                      {comparison.race_laps} laps
-                    </span>
-
-                    <span className="rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
-                      {comparison.pit_loss_assumption.toFixed(1)}s pit loss
-                    </span>
-
-                    {comparison.experimental && (
-                      <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-300">
-                        Experimental
-                      </span>
-                    )}
-                  </div>
-                </div>
+                      {comparison.experimental && (
+                        <EngineChip tone="amber">Experimental</EngineChip>
+                      )}
+                    </>
+                  }
+                />
 
                 <div className="space-y-6">
                   {/* THE ANSWER */}
