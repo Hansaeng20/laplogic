@@ -32,6 +32,26 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Visible keyboard focus everywhere (mouse clicks stay unchanged) */
+:where(a, button, input, select, summary, [role='button'], [tabindex]):focus-visible {
+  outline: 2px solid #e10600;
+  outline-offset: 2px;
+}
+
+details > summary {
+  list-style-position: inside;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-spin {
+    animation-duration: 2.5s;
+  }
+}
+
 /* Hero placeholder (only visible until a hero video is added) */
 .hero-glow {
   animation: hero-breathe 7s ease-in-out infinite;
