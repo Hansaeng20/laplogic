@@ -8,14 +8,16 @@ export function EngineBay({
   title,
   hint,
   children,
+  rod = true,
 }: {
   step: string
   title: string
   hint: string
   children: ReactNode
+  rod?: boolean // false hides the crankshaft connector (upload form)
 }) {
   return (
-    <div className="engine-bay">
+    <div className={`engine-bay ${rod ? '' : 'no-rod'}`}>
       <span className="engine-spark" aria-hidden="true" />
 
       <div className="mb-5 flex items-center gap-3">

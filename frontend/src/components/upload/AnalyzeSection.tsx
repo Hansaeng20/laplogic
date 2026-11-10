@@ -13,7 +13,9 @@ import {
 import { CATEGORIES, MAX_FILE_LABEL, SIMULATORS } from '../../constants'
 import type { UploadMode } from '../../types'
 import { formatSize } from '../../utils/format'
-import { Panel, PanelTitle } from '../ui/Panel'
+import { EngineGears } from '../art/RaceCarArt'
+import { EngineBay } from '../strategy/EngineParts'
+import { EngineChip, EngineHeader } from '../ui/Panel'
 
 const SELECT_CLASS =
   'w-full appearance-none rounded-lg border border-white/15 bg-[#0c1320] px-4 py-3.5 pr-10 text-sm outline-none focus:border-red-500'
@@ -92,32 +94,48 @@ export default function AnalyzeSection({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {/* CONFIGURATION */}
-      <Panel>
-        <PanelTitle step="01" title="Session Configuration" hint="Pick the category and game" />
+    <div className="engine-block">
+      <EngineHeader
+        glyph={<EngineGears className="h-12 w-[4.5rem] shrink-0" />}
+        title="Session Setup"
+        subtitle="Two quick steps, then analyze."
+        chipsLabel="Current session"
+        chips={
+          <>
+            <EngineChip>{category}</EngineChip>
+            <EngineChip>{simulator}</EngineChip>
+            <EngineChip tone={selectedFile ? 'default' : 'muted'} className="max-w-[14rem]">
+              <span className="truncate">{selectedFile ? selectedFile.name : 'No file yet'}</span>
+            </EngineChip>
+          </>
+        }
+      />
 
+      <div className="grid gap-4 lg:grid-cols-2">
+      {/* 01 SESSION */}
+      <EngineBay step="01" title="Session" hint="Category and game" rod={false}>
         <SelectField
           id="category"
           label="Racing Category"
           value={category}
           options={CATEGORIES}
           onChange={onCategoryChange}
-          className="mb-6"
         />
 
-        <SelectField
-          id="simulator"
-          label="Simulator / Game"
-          value={simulator}
-          options={SIMULATORS}
-          onChange={onSimulatorChange}
-        />
-        <p className="mt-2 text-xs text-slate-500">
-          Sets the strategy rules, e.g. the F1 two-compound rule and typical pit loss.
-        </p>
+        <div>
+          <SelectField
+            id="simulator"
+            label="Simulator / Game"
+            value={simulator}
+            options={SIMULATORS}
+            onChange={onSimulatorChange}
+          />
+          <p className="mt-2 text-xs text-slate-500">
+            Sets the strategy rules, e.g. the F1 two-compound rule and typical pit loss.
+          </p>
+        </div>
 
-        <div className="mt-7 rounded-lg border border-white/10 bg-[#0c1320] p-4 text-sm">
+        <div className="rounded-lg border border-white/10 bg-[#0c1320] p-4 text-sm">
           <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Current Session</p>
           <dl className="space-y-3">
             <div className="flex justify-between gap-4">
@@ -134,12 +152,11 @@ export default function AnalyzeSection({
             </div>
           </dl>
         </div>
-      </Panel>
+      </EngineBay>
 
-      {/* FILE UPLOAD */}
-      <Panel>
-        <PanelTitle step="02" title="Upload Race Data" hint="Add your session file" />
-        <div className="mb-5 grid grid-cols-2 gap-3">
+      {/* 02 UPLOAD */}
+      <EngineBay step="02" title="Upload" hint="Your session file" rod={false}>
+        <div className="grid grid-cols-2 gap-3">
           {([
             { mode: 'csv', label: 'CSV Data', icon: <FileSpreadsheet size={18} aria-hidden="true" /> },
             { mode: 'pdf', label: 'PDF Report', icon: <FileText size={18} aria-hidden="true" /> },
@@ -212,7 +229,7 @@ export default function AnalyzeSection({
         </div>
 
         {selectedFile && (
-          <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
             <div className="flex min-w-0 items-center gap-2">
               <CheckCircle2 size={19} className="shrink-0 text-emerald-400" aria-hidden="true" />
               <span className="min-w-0 truncate text-sm">
@@ -233,7 +250,9 @@ export default function AnalyzeSection({
           </div>
         )}
 
-        {fileError && <p role="alert" className="mt-4 text-sm text-red-400">{fileError}</p>}
+        {fileError && <p role="alert" className="text-sm text-red-400">{fileError}</p>}
+      </EngineBay>
+      </div>
 
         <button
           type="button"
@@ -249,7 +268,6 @@ export default function AnalyzeSection({
         {uploadMode === 'pdf' && (
           <p className="mt-3 text-center text-xs text-amber-400">PDF analysis will be added later.</p>
         )}
-      </Panel>
     </div>
   )
 }

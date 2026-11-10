@@ -4,6 +4,7 @@ import {
   Activity,
   AlertTriangle,
   CheckCircle2,
+  Gauge,
   Info,
   LoaderCircle,
   MapPin,
@@ -14,7 +15,15 @@ import {
 import type { Analysis, Insight } from '../../types'
 import { formatTime, tyreColor } from '../../utils/format'
 import CrankStrategy from '../strategy/CrankStrategy'
-import { Metric, Panel, SectionHeading, TyreDot } from '../ui/Panel'
+import {
+  EngineBadge,
+  EngineChip,
+  EngineHeader,
+  Metric,
+  PanelHeading,
+  SectionHeading,
+  TyreDot,
+} from '../ui/Panel'
 
 // Recharts is the heaviest dependency; load it only once results exist.
 const LapChart = lazy(() => import('./LapChart'))
@@ -28,11 +37,8 @@ const INSIGHT_STYLE: Record<Insight['level'], { icon: typeof Info; className: st
 function InsightsPanel({ insights }: { insights: Insight[] }) {
   if (insights.length === 0) return null
   return (
-    <Panel>
-      <h3 className="text-xl font-bold">Key Insights</h3>
-      <p className="mb-6 mt-2 text-sm text-slate-400">
-        What your data says, in plain language
-      </p>
+    <div className="engine-panel">
+      <PanelHeading hint="What your data says, in plain language">Key insights</PanelHeading>
       <ul className="grid gap-3 md:grid-cols-2">
         {insights.map((insight) => {
           const { icon: Icon, className } = INSIGHT_STYLE[insight.level]
@@ -47,7 +53,7 @@ function InsightsPanel({ insights }: { insights: Insight[] }) {
           )
         })}
       </ul>
-    </Panel>
+    </div>
   )
 }
 
@@ -79,16 +85,24 @@ function RaceAnalysis({
         description={`${analysis.filename} · ${category} · ${simulator}`}
       />
 
-      {/* CIRCUIT */}
-      <Panel>
-        <div className="flex items-center gap-3">
-          <MapPin size={23} className="text-red-400" aria-hidden="true" />
-          <div>
-            <p className="text-xs font-bold tracking-wider text-slate-400">CIRCUIT FROM CSV</p>
-            <h3 className="mt-1 text-2xl font-bold">{analysis.circuit}</h3>
-          </div>
-        </div>
-      </Panel>
+      <div className="engine-block">
+      <EngineHeader
+        glyph={<EngineBadge><Gauge size={24} aria-hidden="true" /></EngineBadge>}
+        title="Session Results"
+        subtitle="Pace, tyres and pit stops from your upload."
+        chips={
+          <>
+            <EngineChip>
+              <MapPin size={13} className="text-red-400" aria-hidden="true" />
+              <span className="sr-only">Circuit:</span>
+              {analysis.circuit}
+            </EngineChip>
+            <EngineChip>{analysis.laps.length} laps</EngineChip>
+          </>
+        }
+      />
+
+      <div className="space-y-6">
 
       {/* METRICS */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -133,9 +147,8 @@ function RaceAnalysis({
       <InsightsPanel insights={analysis.insights} />
 
       {/* TYRE STINTS */}
-      <Panel>
-        <h3 className="text-xl font-bold">Recorded Tyre Strategy</h3>
-        <p className="mb-6 mt-2 text-sm text-slate-400">Tyre usage from your uploaded session</p>
+      <div className="engine-panel">
+        <PanelHeading hint="Tyre usage from your uploaded session">Recorded tyre strategy</PanelHeading>
 
         <CrankStrategy stints={analysis.stints} label="Recorded tyre strategy" />
 
@@ -166,16 +179,16 @@ function RaceAnalysis({
             </div>
           ))}
         </div>
-      </Panel>
+      </div>
 
       {/* RECORDED PIT STOPS */}
-      <Panel>
-        <h3 className="mb-1 flex items-center gap-2 text-xl font-bold">
-          <Wrench className="text-red-400" aria-hidden="true" />
-          Recorded Pit Stops
-        </h3>
+      <div className="engine-panel">
+        <PanelHeading>
+          <Wrench size={17} className="text-red-400" aria-hidden="true" />
+          Recorded pit stops
+        </PanelHeading>
         {pits.source_label && (
-          <p className="mb-5 text-xs text-slate-500">Detected from {pits.source_label}</p>
+          <p className="mt-1 text-xs text-slate-500">Detected from {pits.source_label}</p>
         )}
 
         {!pits.available ? (
@@ -215,14 +228,13 @@ function RaceAnalysis({
             ))}
           </div>
         )}
-      </Panel>
+      </div>
 
       {/* LAP TIME CHART */}
-      <Panel>
-        <h3 className="text-xl font-bold">Lap-Time Performance</h3>
-        <p className="mb-6 mt-2 text-sm text-slate-400">
-          Red: lap time · Hollow dot: not used for pace (start, pit, outlier) · Yellow line: pit stop
-        </p>
+      <div className="engine-panel">
+        <PanelHeading hint="Red: lap time · Hollow dot: not used for pace (start, pit, outlier) · Yellow line: pit stop">
+          Lap-time performance
+        </PanelHeading>
         <Suspense
           fallback={
             <div className="grid h-80 place-items-center text-sm text-slate-500" role="status">
@@ -233,12 +245,12 @@ function RaceAnalysis({
         >
           <LapChart laps={analysis.laps} pitLaps={pitLaps} />
         </Suspense>
-      </Panel>
+      </div>
 
       {/* LAP TABLE */}
-      <div className="panel overflow-hidden">
+      <div className="engine-panel engine-panel-flush overflow-hidden">
         <div className="border-b border-white/10 p-5">
-          <h3 className="text-xl font-bold">Lap-by-Lap Breakdown</h3>
+          <PanelHeading>Lap-by-lap breakdown</PanelHeading>
         </div>
 
         <div className="max-h-96 overflow-auto" tabIndex={0} aria-label="Lap-by-lap table">
@@ -276,7 +288,7 @@ function RaceAnalysis({
       </div>
 
       {/* DATA QUALITY */}
-      <details className="panel group p-5 text-sm">
+      <details className="engine-panel group text-sm">
         <summary className="cursor-pointer font-semibold text-slate-300">
           Data quality & detected columns
           {quality.warnings.length > 0 && (
@@ -320,6 +332,8 @@ function RaceAnalysis({
           </div>
         </div>
       </details>
+      </div>
+      </div>
     </section>
   )
 }

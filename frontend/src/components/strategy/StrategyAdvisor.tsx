@@ -15,7 +15,7 @@ import { optimizeStrategy } from '../../services/api'
 import type { AdvisorPlan, AdvisorResult, AdvisorSettings, VerdictCode } from '../../types'
 import { formatSigned, formatTime, stopLabel, tyreColor } from '../../utils/format'
 import { EngineGears } from '../art/RaceCarArt'
-import { Chip, ErrorBanner, SectionHeading, TyreDot } from '../ui/Panel'
+import { Chip, EngineChip, EngineHeader, ErrorBanner, SectionHeading, TyreDot } from '../ui/Panel'
 import CrankStrategy from './CrankStrategy'
 
 const DEFAULT_SETTINGS: AdvisorSettings = {
@@ -299,26 +299,22 @@ export default function StrategyAdvisor({
       />
 
       <div className={`engine-block ${loading ? 'is-comparing' : ''}`}>
-        <div className="engine-head flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-          <div className="flex items-center gap-4">
-            <EngineGears className="h-12 w-[4.5rem] shrink-0" />
-            <div>
-              <h3 className="text-xl font-bold">Laplogic Strategy Advisor</h3>
-              <p className="mt-0.5 text-xs text-slate-500">
-                Deterministic optimization from your own lap data, no guesswork.
-              </p>
-            </div>
-          </div>
-          {result && (
-            <div className="flex flex-wrap items-center gap-2">
-              <Chip>{result.simulator.label}</Chip>
-              <Chip>{result.race_laps} laps</Chip>
-              <Chip>
-                {result.pit_loss.seconds.toFixed(1)}s pit loss · {result.pit_loss.source}
-              </Chip>
-            </div>
-          )}
-        </div>
+        <EngineHeader
+          glyph={<EngineGears className="h-12 w-[4.5rem] shrink-0" />}
+          title="Laplogic Strategy Advisor"
+          subtitle="Deterministic optimization from your own lap data, no guesswork."
+          chips={
+            result ? (
+              <>
+                <EngineChip>{result.simulator.label}</EngineChip>
+                <EngineChip>{result.race_laps} laps</EngineChip>
+                <EngineChip tone={result.pit_loss.source === 'assumed' ? 'amber' : 'default'}>
+                  {result.pit_loss.seconds.toFixed(1)}s pit loss · {result.pit_loss.source}
+                </EngineChip>
+              </>
+            ) : undefined
+          }
+        />
 
         {loading && (
           <div role="status" className="flex items-center gap-3 py-10 text-slate-300">

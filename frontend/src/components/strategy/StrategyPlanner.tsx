@@ -5,7 +5,14 @@ import { compareStrategies } from '../../services/api'
 import type { Analysis, StrategyComparison, StrategyType, TimelineStint } from '../../types'
 import { formatGap, formatTime, tyreColor } from '../../utils/format'
 import { EngineGears } from '../art/RaceCarArt'
-import { Chip, ErrorBanner, SectionHeading, TyreDot } from '../ui/Panel'
+import {
+  EngineBadge,
+  EngineChip,
+  EngineHeader,
+  ErrorBanner,
+  SectionHeading,
+  TyreDot,
+} from '../ui/Panel'
 import CrankStrategy from './CrankStrategy'
 import { CompoundSelector, EngineBay, EngineRange } from './EngineParts'
 
@@ -199,30 +206,28 @@ export default function StrategyPlanner({
 
       <div className={`engine-block ${loading ? 'is-comparing' : ''}`}>
         {/* HEADER + LIVE PLAN SUMMARY */}
-        <div className="engine-head flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-          <div className="flex items-center gap-4">
-            <EngineGears className="h-12 w-[4.5rem] shrink-0" />
-            <div>
-              <h3 className="text-xl font-bold">Strategy Configuration</h3>
-              <p className="mt-0.5 text-xs text-slate-500">Set up your plan in four steps, then compare.</p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2" aria-label="Current plan">
-            <Chip>{raceLaps} laps</Chip>
-            <Chip>{strategyType === 'one_stop' ? '1 stop' : '2 stops'}</Chip>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-[#0b1120] px-3 py-1 font-mono text-xs font-semibold text-slate-200">
-              {previewStints.map((stint, index) => (
-                <span key={index} className="inline-flex items-center gap-1.5">
-                  {index > 0 && <span className="text-slate-600" aria-hidden="true">→</span>}
-                  <TyreDot color={tyreColor(stint.compound)} size="h-2 w-2" />
-                  {stint.compound.charAt(0)}
-                </span>
-              ))}
-            </span>
-            <Chip>{pitLoss.toFixed(1)}s pit loss</Chip>
-          </div>
-        </div>
+        <EngineHeader
+          glyph={<EngineGears className="h-12 w-[4.5rem] shrink-0" />}
+          title="Strategy Configuration"
+          subtitle="Set up your plan in four steps, then compare."
+          chipsLabel="Current plan"
+          chips={
+            <>
+              <EngineChip>{raceLaps} laps</EngineChip>
+              <EngineChip>{strategyType === 'one_stop' ? '1 stop' : '2 stops'}</EngineChip>
+              <EngineChip>
+                {previewStints.map((stint, index) => (
+                  <span key={index} className="inline-flex items-center gap-1.5">
+                    {index > 0 && <span className="text-slate-600" aria-hidden="true">→</span>}
+                    <TyreDot color={tyreColor(stint.compound)} size="h-2 w-2" />
+                    {stint.compound.charAt(0)}
+                  </span>
+                ))}
+              </EngineChip>
+              <EngineChip>{pitLoss.toFixed(1)}s pit loss</EngineChip>
+            </>
+          }
+        />
 
         {/* FOUR "CYLINDERS" */}
         <div className="mb-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -389,29 +394,18 @@ export default function StrategyPlanner({
       {/* STRATEGY RESULTS */}
       {comparison && view && (
         <div className="engine-block results-in" aria-live="polite">
-          <div className="engine-head flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-            <div className="flex items-center gap-4">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border-2 border-[#E10600] bg-[#0b1120] text-red-400">
-                <Gauge size={24} aria-hidden="true" />
-              </span>
-              <div>
-                <h3 className="text-xl font-bold">Strategy Comparison</h3>
-                <p className="mt-0.5 text-xs text-slate-500">
-                  Estimated results for a {comparison.race_laps}-lap race. The alternative is
-                  Laplogic&apos;s best plan with a different number of stops.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Chip>{comparison.race_laps} laps</Chip>
-              <Chip>{comparison.pit_loss_assumption.toFixed(1)}s pit loss</Chip>
-              {comparison.experimental && (
-                <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-300">
-                  Estimate
-                </span>
-              )}
-            </div>
-          </div>
+          <EngineHeader
+            glyph={<EngineBadge><Gauge size={24} aria-hidden="true" /></EngineBadge>}
+            title="Strategy Comparison"
+            subtitle={`Estimated results for a ${comparison.race_laps}-lap race. The alternative is Laplogic's best plan with a different number of stops.`}
+            chips={
+              <>
+                <EngineChip>{comparison.race_laps} laps</EngineChip>
+                <EngineChip>{comparison.pit_loss_assumption.toFixed(1)}s pit loss</EngineChip>
+                {comparison.experimental && <EngineChip tone="amber">Estimate</EngineChip>}
+              </>
+            }
+          />
 
           <div className="space-y-6">
             {view.best && (
